@@ -3,3 +3,18 @@ title: "ENVS-193DS_homework_03"
 format: html
 ---
 
+Link to github repository: 
+https://github.com/oregel714/ENVS-193DS_homework-03.git
+```{r}
+messages = FALSE
+# reading in necessary packages 
+
+library(tidyverse)
+library(here)
+library(gt)
+library(flextable)
+library(janitor)
+library(readxl)
+
+```
+
