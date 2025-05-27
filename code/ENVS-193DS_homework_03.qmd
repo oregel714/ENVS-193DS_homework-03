@@ -16,5 +16,15 @@ library(flextable)
 library(janitor)
 library(readxl)
 
+# reading in data 
+ActiveData <- read_csv("DataSheet.csv")
+
+
 ```
+
+Problem #1: 
+
+I can summarize my data by comparing two groups (long day vs. non-long day) and the average amount of money spent depending on the day. On long days, I'm on campus for more than 5 hours and I feel that I am more tempted to spend money on campus the longer I am here. I can also compare the observations of mean dollars spent on campus between the days that I had breakfast or not. This would allow me to observe if having breakfast might influence whether or not I spend money on campus. 
+
+
 
