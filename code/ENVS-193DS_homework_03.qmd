@@ -119,6 +119,14 @@ The form of my work is a drawing that I did in my notes app.
 
 I created my work by drawing on my ipad and overlaying the drawing/sketches on top of the data visualization that I created. 
 
+Problem #3 
+
+a. The statistical test performed in the study is a multivariate logistic regression. The response variable for the test is the level of contaminant detected in the drinking water and the predictor variables included the drinking fountains, their locations, and sinks. 
+
+```{r}
+knitr::include_graphics("/Users/swaggerboy/github/ENVS-193DS_homework-03/code/screenshot.png")
+```
+
 
 
 
