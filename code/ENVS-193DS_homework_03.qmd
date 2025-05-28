@@ -111,7 +111,13 @@ knitr::include_graphics("/Users/swaggerboy/github/ENVS-193DS_homework-03/code/IM
 
 ```
 
+d. Artist Statement 
+I am showing what I typically spend money on while I'm on campus. Personally, this visualization does represent my need to feel like I'm productive. Yerbs and coffees are caffeinated implying productivity while I'm someone who does not find myself often needing it, however, it's a placebo effect that helps me feel productive. 
 
+For me, the technique of simple line drawing are effective at conveying a message. It evokes a certain kind of nostalgia that takes me back to when I used to draw during recess or for fun at home. 
+The form of my work is a drawing that I did in my notes app. 
+
+I created my work by drawing on my ipad and overlaying the drawing/sketches on top of the data visualization that I created. 
 
 
 
