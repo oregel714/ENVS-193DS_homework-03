@@ -68,7 +68,6 @@ ggplot(data = ActiveData1,
        aes(x = `Long Day`,
            y = `Money Spent`,
            color = `Money Spent`)) + 
-  geom_boxplot()
   geom_jitter(width = 0.1)
 
 
@@ -87,4 +86,11 @@ avg_money2 <- ActiveData1 |>
 
 
 ```
+
+
+Problem #2 
+
+a. Since I am working with how much money I spend while I'm on campus, perhaps I could visualize my data using objects or symbols related to that. I could create a histogram using my data and then use a coffee cup or a yerba mate (both of which I typically spend money on) to indicate the days in which I probably bought one. I like the way my data looks in a simple, vertical jitter plot. Maybe I can draw lines from the points as they ascend using colors to inidicate that lower amounts are better and higher amounts are worse, changing color as the jitter points ascende the graph. 
+
+
 
