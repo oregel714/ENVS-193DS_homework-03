@@ -17,7 +17,40 @@ library(janitor)
 library(readxl)
 
 # reading in data 
-ActiveData <- read_csv("DataSheet.csv")
+ActiveData1 <- read_csv("DataSheet(1).csv")
+
+
+```
+
+
+```{r}
+
+money_spent_long_day <- ActiveData1 |> 
+  select(`Long Day`, `Money Spent`) |> 
+
+average_money_summary <- money_spent_long_day |> 
+  group_by(`Long Day`) |> 
+  summarize(mean = mean(`Money Spent`),
+            sd = sd(`Money Spent`),
+            se = sd / sqrt(n()),
+            ci_lower = mean - qt(0.975, df = n() - 1) * se,
+            ci_upper = mean + qt(0.975, df = n() - 1) * se) |> 
+  mutate(across(c(mean, sd, se, ci_lower, ci_upper),
+                ~ round(.x, 1)))
+
+average_money_summary |> 
+  gt() |> 
+  cols_label(
+    `Long Day` = "Long Day",
+    mean = "Mean",
+    sd = "Standard Deviation",
+    se = "Standard Error",
+    ci_lower = "95% Confidence Level (Lower)",
+    ci_upper = "95% Confidence Level (Upper)"
+    
+  ) |> 
+  tab_header(title = "Money Spent Summary Statistics")
+
 
 
 ```
@@ -26,5 +59,32 @@ Problem #1:
 
 I can summarize my data by comparing two groups (long day vs. non-long day) and the average amount of money spent depending on the day. On long days, I'm on campus for more than 5 hours and I feel that I am more tempted to spend money on campus the longer I am here. I can also compare the observations of mean dollars spent on campus between the days that I had breakfast or not. This would allow me to observe if having breakfast might influence whether or not I spend money on campus. 
 
+```{r}
+# wrangling and cleaning data
 
+clean_names(ActiveData1)
+
+ggplot(data = ActiveData1,
+       aes(x = `Long Day`,
+           y = `Money Spent`,
+           color = `Money Spent`)) + 
+  geom_boxplot()
+  geom_jitter(width = 0.1)
+
+
+```
+
+```{r}
+avg_money <- ActiveData1 |> 
+  filter(`Long Day` == "Yes") |> 
+  summarize(mean_money_yes = mean(`Money Spent`))
+
+avg_money2 <- ActiveData1 |> 
+  filter(`Long Day` == "No") |> 
+  summarize(mean_money_no = mean(`Money Spent`))
+
+
+
+
+```
 
