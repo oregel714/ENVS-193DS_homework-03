@@ -101,6 +101,15 @@ knitr::include_graphics("/Users/swaggerboy/github/ENVS-193DS_homework-03/code/IM
 
 ```
 
+c. Draft of the data visualization 
+```{r} 
+
+knitr::include_graphics("/Users/swaggerboy/github/ENVS-193DS_homework-03/code/IMG_0120.png")
+
+
+
+
+```
 
 
 
