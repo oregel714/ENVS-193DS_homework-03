@@ -74,7 +74,7 @@ ggplot(data = average_money_summary, # starting with data frame
   
 
 ```
-c. 
+c. This jitter plot displays a comparison of money spent on campus between long and short days. Each point represents a daily observation with the red and blue dots indicating individual spending. The black points represent the group means and the error bars show the standard error of the mean. 
 
 
 
