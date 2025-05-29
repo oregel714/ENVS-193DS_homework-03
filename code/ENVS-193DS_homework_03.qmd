@@ -6,7 +6,7 @@ format: html
 Link to github repository: 
 https://github.com/oregel714/ENVS-193DS_homework-03.git
 ```{r}
-messages = FALSE
+#| message: false
 # reading in necessary packages 
 
 library(tidyverse)
@@ -15,6 +15,7 @@ library(gt)
 library(flextable)
 library(janitor)
 library(readxl)
+library(dplyr)
 
 # reading in data 
 ActiveData1 <- read_csv("DataSheet(1).csv")
@@ -23,10 +24,27 @@ ActiveData1 <- read_csv("DataSheet(1).csv")
 ```
 
 
-```{r}
+Problem #1: 
 
+I can summarize my data by comparing two groups (long day vs. non-long day) and the average amount of money spent depending on the day. On long days, I'm on campus for more than 5 hours and I feel that I am more tempted to spend money on campus the longer I am here. I can also compare the observations of mean dollars spent on campus between the days that I had breakfast or not. This would allow me to observe if having breakfast might influence whether or not I spend money on campus. 
+
+```{r}
+#| message: false
+# wrangling and cleaning data
+
+ggplot(data = ActiveData1,
+       aes(x = `Long Day`,
+           y = `Money Spent`,
+           color = `Money Spent`)) + 
+  geom_jitter(width = 0.1)
+
+
+```
+b. 
+```{r}
+#| message: false
 money_spent_long_day <- ActiveData1 |> 
-  select(`Long Day`, `Money Spent`) |> 
+  select(`Long Day`, `Money Spent`) 
 
 average_money_summary <- money_spent_long_day |> 
   group_by(`Long Day`) |> 
@@ -35,9 +53,15 @@ average_money_summary <- money_spent_long_day |>
             se = sd / sqrt(n()),
             ci_lower = mean - qt(0.975, df = n() - 1) * se,
             ci_upper = mean + qt(0.975, df = n() - 1) * se) |> 
+  
+  
   mutate(across(c(mean, sd, se, ci_lower, ci_upper),
                 ~ round(.x, 1)))
 
+```
+
+```{r}
+#| message: false
 average_money_summary |> 
   gt() |> 
   cols_label(
@@ -52,39 +76,6 @@ average_money_summary |>
   tab_header(title = "Money Spent Summary Statistics")
 
 
-
-```
-
-Problem #1: 
-
-I can summarize my data by comparing two groups (long day vs. non-long day) and the average amount of money spent depending on the day. On long days, I'm on campus for more than 5 hours and I feel that I am more tempted to spend money on campus the longer I am here. I can also compare the observations of mean dollars spent on campus between the days that I had breakfast or not. This would allow me to observe if having breakfast might influence whether or not I spend money on campus. 
-
-```{r}
-# wrangling and cleaning data
-
-clean_names(ActiveData1)
-
-ggplot(data = ActiveData1,
-       aes(x = `Long Day`,
-           y = `Money Spent`,
-           color = `Money Spent`)) + 
-  geom_jitter(width = 0.1)
-
-
-```
-
-```{r}
-avg_money <- ActiveData1 |> 
-  filter(`Long Day` == "Yes") |> 
-  summarize(mean_money_yes = mean(`Money Spent`))
-
-avg_money2 <- ActiveData1 |> 
-  filter(`Long Day` == "No") |> 
-  summarize(mean_money_no = mean(`Money Spent`))
-
-
-
-
 ```
 
 
@@ -94,20 +85,15 @@ a. Since I am working with how much money I spend while I'm on campus, perhaps I
 
 b. Sketch 
 ```{r} 
-
+#| message: false
 knitr::include_graphics("/Users/swaggerboy/github/ENVS-193DS_homework-03/code/IMG_0119.png")
-
-
 
 ```
 
 c. Draft of the data visualization 
 ```{r} 
-
+#| message: false
 knitr::include_graphics("/Users/swaggerboy/github/ENVS-193DS_homework-03/code/IMG_0120.png")
-
-
-
 
 ```
 
@@ -124,6 +110,7 @@ Problem #3
 a. The statistical test performed in the study is a multivariate logistic regression. The response variable for the test is the level of contaminant detected in the drinking water and the predictor variables included the drinking fountains, their locations, and sinks. Additionally, a Wilcox signed-rank test was performed for the maximum first and second draw samples. 
 
 ```{r}
+#| message: false
 knitr::include_graphics("/Users/swaggerboy/github/ENVS-193DS_homework-03/code/screenshot.png")
 ```
 
@@ -132,5 +119,5 @@ b. The table provided by the author displays the information well. Separate colu
 c. The table provided by the author provides the information conveyed in the analysis fairly well. It displays the Mean (standard deviation), maximum, and minimum of the lead levels in ppb which is explained in the caption above the table. Providing this information above the table is a critical aspect to understanding the results as the numbers are confusing without it. The only bold font present would be the column titles above the results, however, the table is a bit cluttered with a lot of numbers so additional emphasis would help clarify important information. 
 
 
-
+d. I think that adding some grid lines or some reference point for your eyes to trace to the information would help the overall visual clarity of the table. Having the information kind of floating around feels a little cluttered. At first glance, it looks a bit like a jumble of numbers and words. At the very least, creating lines that contain/define the columns on the top of the table would help.  
 
