@@ -112,73 +112,124 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <span id="cb1-12"><a href="#cb1-12" aria-hidden="true" tabindex="-1"></a>ActiveData1 <span class="ot">&lt;-</span> <span class="fu">read_csv</span>(<span class="st">"DataSheet(1).csv"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Problem #1:</p>
-<p>I can summarize my data by comparing two groups (long day vs.&nbsp;non-long day) and the average amount of money spent depending on the day. On long days, I’m on campus for more than 5 hours and I feel that I am more tempted to spend money on campus the longer I am here. I can also compare the observations of mean dollars spent on campus between the days that I had breakfast or not. This would allow me to observe if having breakfast might influence whether or not I spend money on campus.</p>
+<ol type="a">
+<li><p>I can summarize my data by comparing two groups (long day vs.&nbsp;non-long day) and the average amount of money spent depending on the day. On long days, I’m on campus for more than 5 hours and I feel that I am more tempted to spend money on campus the longer I am here. I can also compare the observations of mean dollars spent on campus between the days that I had breakfast or not. This would allow me to observe if having breakfast might influence whether or not I spend money on campus.</p></li>
+<li></li>
+</ol>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># wrangling and cleaning data</span></span>
-<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> ActiveData1,</span>
-<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> <span class="st">`</span><span class="at">Long Day</span><span class="st">`</span>,</span>
-<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>           <span class="at">y =</span> <span class="st">`</span><span class="at">Money Spent</span><span class="st">`</span>,</span>
-<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>           <span class="at">color =</span> <span class="st">`</span><span class="at">Money Spent</span><span class="st">`</span>)) <span class="sc">+</span> </span>
-<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="at">width =</span> <span class="fl">0.1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb2"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a><span class="co"># creating `average_money_summary` before so R can read it in order to render </span></span>
+<span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>money_spent_long_day <span class="ot">&lt;-</span> ActiveData1 <span class="sc">|&gt;</span> <span class="co"># creating new object from 'ActiveData1' to 'money_spent_long_day'</span></span>
+<span id="cb2-3"><a href="#cb2-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="st">`</span><span class="at">Long Day</span><span class="st">`</span>, <span class="st">`</span><span class="at">Money Spent</span><span class="st">`</span>) <span class="co"># selecting `Long Day` and `Money Spent` </span></span>
+<span id="cb2-4"><a href="#cb2-4" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb2-5"><a href="#cb2-5" aria-hidden="true" tabindex="-1"></a>average_money_summary <span class="ot">&lt;-</span> money_spent_long_day <span class="sc">|&gt;</span> <span class="co"># create new object from `money_spent_long_day` to `average_money_summary` </span></span>
+<span id="cb2-6"><a href="#cb2-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(<span class="st">`</span><span class="at">Long Day</span><span class="st">`</span>) <span class="sc">|&gt;</span>  <span class="co"># grouping by `Long Day` points </span></span>
+<span id="cb2-7"><a href="#cb2-7" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">mean =</span> <span class="fu">mean</span>(<span class="st">`</span><span class="at">Money Spent</span><span class="st">`</span>), <span class="co"># summarizing the mean from `Money Spent` </span></span>
+<span id="cb2-8"><a href="#cb2-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">sd =</span> <span class="fu">sd</span>(<span class="st">`</span><span class="at">Money Spent</span><span class="st">`</span>), <span class="co"># calculating the standard deviation from `Money Spent` </span></span>
+<span id="cb2-9"><a href="#cb2-9" aria-hidden="true" tabindex="-1"></a>            <span class="at">se =</span> sd <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="fu">n</span>()), <span class="co"># calculating standard error from standard deviation </span></span>
+<span id="cb2-10"><a href="#cb2-10" aria-hidden="true" tabindex="-1"></a>            <span class="at">ci_lower =</span> mean <span class="sc">-</span> <span class="fu">qt</span>(<span class="fl">0.975</span>, <span class="at">df =</span> <span class="fu">n</span>() <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span> se, <span class="co"># calculating the upper and lower quartile </span></span>
+<span id="cb2-11"><a href="#cb2-11" aria-hidden="true" tabindex="-1"></a>            <span class="at">ci_upper =</span> mean <span class="sc">+</span> <span class="fu">qt</span>(<span class="fl">0.975</span>, <span class="at">df =</span> <span class="fu">n</span>() <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span> se) <span class="sc">|&gt;</span> </span>
+<span id="cb2-12"><a href="#cb2-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-13"><a href="#cb2-13" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb2-14"><a href="#cb2-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(mean, sd, se, ci_lower, ci_upper), <span class="co"># round mean, sd, se, ci upper and lower to one decimal place </span></span>
+<span id="cb2-15"><a href="#cb2-15" aria-hidden="true" tabindex="-1"></a>                <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="dv">1</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div class="cell">
+<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a><span class="fu">ggplot</span>(<span class="at">data =</span> average_money_summary, <span class="co"># starting with data frame </span></span>
+<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>       <span class="fu">aes</span>(<span class="at">x =</span> <span class="st">`</span><span class="at">Long Day</span><span class="st">`</span>, <span class="co"># label x-axis as 'Long Day'</span></span>
+<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>           <span class="at">y =</span> <span class="st">`</span><span class="at">mean</span><span class="st">`</span>, <span class="co"># label y-axis as 'mean' </span></span>
+<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>           <span class="at">fill =</span> <span class="st">`</span><span class="at">Long Day</span><span class="st">`</span>)) <span class="sc">+</span> <span class="co"># fill color for 'Long Day' variable </span></span>
+<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_jitter</span>(<span class="at">data =</span> ActiveData1, <span class="co"># use jitterplot function starting with 'ActiveData1' data frame </span></span>
+<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>              <span class="fu">aes</span>(<span class="at">x =</span> <span class="st">`</span><span class="at">Long Day</span><span class="st">`</span>, <span class="co"># set x-axis as Long Day for jitterplot </span></span>
+<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>                  <span class="at">y =</span> <span class="st">`</span><span class="at">Money Spent</span><span class="st">`</span>, <span class="co"># set y-axis as Money Spent  </span></span>
+<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>                  <span class="at">color =</span> <span class="st">`</span><span class="at">Long Day</span><span class="st">`</span>), <span class="co"># use color for Long Day variable</span></span>
+<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>              <span class="at">shape =</span> <span class="dv">18</span>, <span class="co"># setting open circle for shape </span></span>
+<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>              <span class="at">alpha =</span> <span class="dv">1</span>, <span class="co"># setting transparency </span></span>
+<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>              <span class="at">size =</span> <span class="dv">2</span>, <span class="co"># setting size of points </span></span>
+<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>              <span class="at">height =</span> <span class="dv">0</span>, <span class="co"># disabling vertical jitter points </span></span>
+<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>              <span class="at">width =</span> <span class="fl">0.1</span>) <span class="sc">+</span> <span class="co"># enabling horizontal jitter points </span></span>
+<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_errorbar</span>(<span class="fu">aes</span>(<span class="at">ymin =</span> mean <span class="sc">-</span> se, <span class="co"># creating errorbar and creating the upper and lower edges of the standard error </span></span>
+<span id="cb3-15"><a href="#cb3-15" aria-hidden="true" tabindex="-1"></a>                    <span class="at">ymax =</span> mean <span class="sc">+</span> se),</span>
+<span id="cb3-16"><a href="#cb3-16" aria-hidden="true" tabindex="-1"></a>                <span class="at">width =</span> <span class="fl">0.1</span>, <span class="co"># setting width of the caps</span></span>
+<span id="cb3-17"><a href="#cb3-17" aria-hidden="true" tabindex="-1"></a>                <span class="at">color =</span> <span class="st">"black"</span> <span class="co"># setting color to black </span></span>
+<span id="cb3-18"><a href="#cb3-18" aria-hidden="true" tabindex="-1"></a>                ) <span class="sc">+</span> </span>
+<span id="cb3-19"><a href="#cb3-19" aria-hidden="true" tabindex="-1"></a>  <span class="fu">geom_point</span>(<span class="at">data =</span> average_money_summary, <span class="co"># adding primary data frame to display on top of the previously displayed data </span></span>
+<span id="cb3-20"><a href="#cb3-20" aria-hidden="true" tabindex="-1"></a>             <span class="fu">aes</span>(<span class="at">x =</span> <span class="st">`</span><span class="at">Long Day</span><span class="st">`</span>, <span class="co"># setting x-axis as 'Long Day'</span></span>
+<span id="cb3-21"><a href="#cb3-21" aria-hidden="true" tabindex="-1"></a>                 <span class="at">y =</span> <span class="st">`</span><span class="at">mean</span><span class="st">`</span>), <span class="co"># setting y-axis as mean money spent   </span></span>
+<span id="cb3-22"><a href="#cb3-22" aria-hidden="true" tabindex="-1"></a>             <span class="at">inherit.aes =</span> <span class="cn">FALSE</span>, <span class="co"># seperating new aesthetics from the previous aesthetics </span></span>
+<span id="cb3-23"><a href="#cb3-23" aria-hidden="true" tabindex="-1"></a>             <span class="at">color =</span> <span class="st">"black"</span>, <span class="co"># setting color to black for mean point </span></span>
+<span id="cb3-24"><a href="#cb3-24" aria-hidden="true" tabindex="-1"></a>             <span class="at">size =</span> <span class="dv">2</span>) <span class="sc">+</span> <span class="co"># setting size to 2 </span></span>
+<span id="cb3-25"><a href="#cb3-25" aria-hidden="true" tabindex="-1"></a>  <span class="fu">theme</span>(<span class="at">panel.background =</span> <span class="fu">element_rect</span>(<span class="at">fill =</span> <span class="st">"white"</span>), <span class="co"># filling background with white to disable panels </span></span>
+<span id="cb3-26"><a href="#cb3-26" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.major =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="cn">NA</span>), <span class="co"># disabling major panel lines </span></span>
+<span id="cb3-27"><a href="#cb3-27" aria-hidden="true" tabindex="-1"></a>        <span class="at">panel.grid.minor =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="cn">NA</span>), <span class="co"># disabling minor panel lines </span></span>
+<span id="cb3-28"><a href="#cb3-28" aria-hidden="true" tabindex="-1"></a>        <span class="at">legend.position =</span> <span class="st">"none"</span>, <span class="co"># disabling the legend from showing up </span></span>
+<span id="cb3-29"><a href="#cb3-29" aria-hidden="true" tabindex="-1"></a>        <span class="at">axis.line =</span> <span class="fu">element_line</span>(<span class="at">color =</span> <span class="st">"black"</span>)) <span class="sc">+</span> <span class="co"># setting color of axis lines to black </span></span>
+<span id="cb3-30"><a href="#cb3-30" aria-hidden="true" tabindex="-1"></a>  <span class="fu">scale_color_manual</span>(<span class="at">values =</span> <span class="fu">c</span>(<span class="st">"Yes"</span> <span class="ot">=</span> <span class="st">"dodgerblue"</span>, <span class="co"># setting color of 'yes' money points to dodgerblue </span></span>
+<span id="cb3-31"><a href="#cb3-31" aria-hidden="true" tabindex="-1"></a>                                <span class="st">"No"</span> <span class="ot">=</span> <span class="st">"firebrick"</span>)) <span class="sc">+</span> <span class="co"># setting color of "no" money points to firebrick </span></span>
+<span id="cb3-32"><a href="#cb3-32" aria-hidden="true" tabindex="-1"></a>          </span>
+<span id="cb3-33"><a href="#cb3-33" aria-hidden="true" tabindex="-1"></a>  <span class="co"># manually setting title to 'Money Spent on Campus with Standard Deviation and Standard Error', adding subtitle to 'By Mark Oregel', changing y-axis name to 'Money Spent (dollars)', changing x-axis name to 'Long Day'. </span></span>
+<span id="cb3-34"><a href="#cb3-34" aria-hidden="true" tabindex="-1"></a>  <span class="fu">labs</span>(<span class="at">title =</span> <span class="st">"Money Spent on Campus with Standard Deviation and Standard Error"</span>,</span>
+<span id="cb3-35"><a href="#cb3-35" aria-hidden="true" tabindex="-1"></a>       <span class="at">subtitle =</span> <span class="st">"By Mark Oregel"</span>,</span>
+<span id="cb3-36"><a href="#cb3-36" aria-hidden="true" tabindex="-1"></a>       <span class="at">y =</span> <span class="st">"Money Spent (dollars)"</span>,</span>
+<span id="cb3-37"><a href="#cb3-37" aria-hidden="true" tabindex="-1"></a>       <span class="at">x =</span> <span class="st">"Long Day"</span>) </span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="ENVS-193DS_homework_03_files/figure-html/unnamed-chunk-2-1.png" class="img-fluid figure-img" width="672"></p>
+<p><img src="ENVS-193DS_homework_03_files/figure-html/unnamed-chunk-3-1.png" class="img-fluid figure-img" width="672"></p>
 </figure>
 </div>
 </div>
 </div>
-<ol start="2" type="a">
+<ol start="3" type="a">
+<li><p>This jitter plot displays a comparison of money spent on campus between long and short days. Each point represents a daily observation with the red and blue dots indicating individual spending. The black points represent the group means and the error bars show the standard error of the mean.</p></li>
 <li></li>
 </ol>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb3"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>money_spent_long_day <span class="ot">&lt;-</span> ActiveData1 <span class="sc">|&gt;</span> </span>
-<span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="st">`</span><span class="at">Long Day</span><span class="st">`</span>, <span class="st">`</span><span class="at">Money Spent</span><span class="st">`</span>) </span>
-<span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a></span>
-<span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>average_money_summary <span class="ot">&lt;-</span> money_spent_long_day <span class="sc">|&gt;</span> </span>
-<span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(<span class="st">`</span><span class="at">Long Day</span><span class="st">`</span>) <span class="sc">|&gt;</span> </span>
-<span id="cb3-6"><a href="#cb3-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">mean =</span> <span class="fu">mean</span>(<span class="st">`</span><span class="at">Money Spent</span><span class="st">`</span>),</span>
-<span id="cb3-7"><a href="#cb3-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">sd =</span> <span class="fu">sd</span>(<span class="st">`</span><span class="at">Money Spent</span><span class="st">`</span>),</span>
-<span id="cb3-8"><a href="#cb3-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">se =</span> sd <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="fu">n</span>()),</span>
-<span id="cb3-9"><a href="#cb3-9" aria-hidden="true" tabindex="-1"></a>            <span class="at">ci_lower =</span> mean <span class="sc">-</span> <span class="fu">qt</span>(<span class="fl">0.975</span>, <span class="at">df =</span> <span class="fu">n</span>() <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span> se,</span>
-<span id="cb3-10"><a href="#cb3-10" aria-hidden="true" tabindex="-1"></a>            <span class="at">ci_upper =</span> mean <span class="sc">+</span> <span class="fu">qt</span>(<span class="fl">0.975</span>, <span class="at">df =</span> <span class="fu">n</span>() <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span> se) <span class="sc">|&gt;</span> </span>
-<span id="cb3-11"><a href="#cb3-11" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb3-12"><a href="#cb3-12" aria-hidden="true" tabindex="-1"></a>  </span>
-<span id="cb3-13"><a href="#cb3-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(mean, sd, se, ci_lower, ci_upper),</span>
-<span id="cb3-14"><a href="#cb3-14" aria-hidden="true" tabindex="-1"></a>                <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="dv">1</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>money_spent_long_day <span class="ot">&lt;-</span> ActiveData1 <span class="sc">|&gt;</span> <span class="co"># creating new object from 'ActiveData1' to 'money_spent_long_day'</span></span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">select</span>(<span class="st">`</span><span class="at">Long Day</span><span class="st">`</span>, <span class="st">`</span><span class="at">Money Spent</span><span class="st">`</span>) <span class="co"># selecting `Long Day` and `Money Spent` </span></span>
+<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>average_money_summary <span class="ot">&lt;-</span> money_spent_long_day <span class="sc">|&gt;</span> <span class="co"># create new object from `money_spent_long_day` to `average_money_summary` </span></span>
+<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>  <span class="fu">group_by</span>(<span class="st">`</span><span class="at">Long Day</span><span class="st">`</span>) <span class="sc">|&gt;</span>  <span class="co"># grouping by `Long Day` points </span></span>
+<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>  <span class="fu">summarize</span>(<span class="at">mean =</span> <span class="fu">mean</span>(<span class="st">`</span><span class="at">Money Spent</span><span class="st">`</span>), <span class="co"># summarizing the mean from `Money Spent` </span></span>
+<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>            <span class="at">sd =</span> <span class="fu">sd</span>(<span class="st">`</span><span class="at">Money Spent</span><span class="st">`</span>), <span class="co"># calculating the standard deviation from `Money Spent` </span></span>
+<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>            <span class="at">se =</span> sd <span class="sc">/</span> <span class="fu">sqrt</span>(<span class="fu">n</span>()), <span class="co"># calculating standard error from standard deviation </span></span>
+<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>            <span class="at">ci_lower =</span> mean <span class="sc">-</span> <span class="fu">qt</span>(<span class="fl">0.975</span>, <span class="at">df =</span> <span class="fu">n</span>() <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span> se, <span class="co"># calculating the upper and lower quartile </span></span>
+<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>            <span class="at">ci_upper =</span> mean <span class="sc">+</span> <span class="fu">qt</span>(<span class="fl">0.975</span>, <span class="at">df =</span> <span class="fu">n</span>() <span class="sc">-</span> <span class="dv">1</span>) <span class="sc">*</span> se) <span class="sc">|&gt;</span> </span>
+<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  </span>
+<span id="cb4-13"><a href="#cb4-13" aria-hidden="true" tabindex="-1"></a>  <span class="fu">mutate</span>(<span class="fu">across</span>(<span class="fu">c</span>(mean, sd, se, ci_lower, ci_upper), <span class="co"># round mean, sd, se, ci upper and lower to one decimal place </span></span>
+<span id="cb4-14"><a href="#cb4-14" aria-hidden="true" tabindex="-1"></a>                <span class="sc">~</span> <span class="fu">round</span>(.x, <span class="dv">1</span>)))</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>average_money_summary <span class="sc">|&gt;</span> </span>
-<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>() <span class="sc">|&gt;</span> </span>
-<span id="cb4-3"><a href="#cb4-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cols_label</span>(</span>
-<span id="cb4-4"><a href="#cb4-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Long Day</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"Long Day"</span>,</span>
-<span id="cb4-5"><a href="#cb4-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean =</span> <span class="st">"Mean"</span>,</span>
-<span id="cb4-6"><a href="#cb4-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd =</span> <span class="st">"Standard Deviation"</span>,</span>
-<span id="cb4-7"><a href="#cb4-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">se =</span> <span class="st">"Standard Error"</span>,</span>
-<span id="cb4-8"><a href="#cb4-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">ci_lower =</span> <span class="st">"95% Confidence Level (Lower)"</span>,</span>
-<span id="cb4-9"><a href="#cb4-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">ci_upper =</span> <span class="st">"95% Confidence Level (Upper)"</span></span>
-<span id="cb4-10"><a href="#cb4-10" aria-hidden="true" tabindex="-1"></a>    </span>
-<span id="cb4-11"><a href="#cb4-11" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
-<span id="cb4-12"><a href="#cb4-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_header</span>(<span class="at">title =</span> <span class="st">"Money Spent Summary Statistics"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>average_money_summary <span class="sc">|&gt;</span> <span class="co"># start with average_money_summary</span></span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>  <span class="fu">gt</span>() <span class="sc">|&gt;</span> <span class="co"># calling in the 'gt' table function </span></span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a>  <span class="fu">cols_label</span>( <span class="co"># labeling the different aspects of the table by their full names</span></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    <span class="st">`</span><span class="at">Long Day</span><span class="st">`</span> <span class="ot">=</span> <span class="st">"Long Day"</span>,</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a>    <span class="at">mean =</span> <span class="st">"Mean"</span>,</span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    <span class="at">sd =</span> <span class="st">"Standard Deviation"</span>,</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a>    <span class="at">se =</span> <span class="st">"Standard Error"</span>,</span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    <span class="at">ci_lower =</span> <span class="st">"95% Confidence Level (Lower)"</span>,</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    <span class="at">ci_upper =</span> <span class="st">"95% Confidence Level (Upper)"</span></span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a>    </span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>  ) <span class="sc">|&gt;</span> </span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>  <span class="fu">tab_header</span>(<span class="at">title =</span> <span class="st">"Money Spent Summary Statistics"</span>) <span class="co"># setting the title as "Money Spent Summary Statistics" </span></span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
-<div id="bhcktvlbjo" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
-<style>#bhcktvlbjo table {
+<div id="urfehzlhnu" style="padding-left:0px;padding-right:0px;padding-top:10px;padding-bottom:10px;overflow-x:auto;overflow-y:auto;width:auto;height:auto;">
+<style>#urfehzlhnu table {
   font-family: system-ui, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif, 'Apple Color Emoji', 'Segoe UI Emoji', 'Segoe UI Symbol', 'Noto Color Emoji';
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
 }
 
-#bhcktvlbjo thead, #bhcktvlbjo tbody, #bhcktvlbjo tfoot, #bhcktvlbjo tr, #bhcktvlbjo td, #bhcktvlbjo th {
+#urfehzlhnu thead, #urfehzlhnu tbody, #urfehzlhnu tfoot, #urfehzlhnu tr, #urfehzlhnu td, #urfehzlhnu th {
   border-style: none;
 }
 
-#bhcktvlbjo p {
+#urfehzlhnu p {
   margin: 0;
   padding: 0;
 }
 
-#bhcktvlbjo .gt_table {
+#urfehzlhnu .gt_table {
   display: table;
   border-collapse: collapse;
   line-height: normal;
@@ -204,12 +255,12 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-left-color: #D3D3D3;
 }
 
-#bhcktvlbjo .gt_caption {
+#urfehzlhnu .gt_caption {
   padding-top: 4px;
   padding-bottom: 4px;
 }
 
-#bhcktvlbjo .gt_title {
+#urfehzlhnu .gt_title {
   color: #333333;
   font-size: 125%;
   font-weight: initial;
@@ -221,7 +272,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-width: 0;
 }
 
-#bhcktvlbjo .gt_subtitle {
+#urfehzlhnu .gt_subtitle {
   color: #333333;
   font-size: 85%;
   font-weight: initial;
@@ -233,7 +284,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-top-width: 0;
 }
 
-#bhcktvlbjo .gt_heading {
+#urfehzlhnu .gt_heading {
   background-color: #FFFFFF;
   text-align: center;
   border-bottom-color: #FFFFFF;
@@ -245,13 +296,13 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#bhcktvlbjo .gt_bottom_border {
+#urfehzlhnu .gt_bottom_border {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
 }
 
-#bhcktvlbjo .gt_col_headings {
+#urfehzlhnu .gt_col_headings {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -266,7 +317,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#bhcktvlbjo .gt_col_heading {
+#urfehzlhnu .gt_col_heading {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -286,7 +337,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   overflow-x: hidden;
 }
 
-#bhcktvlbjo .gt_column_spanner_outer {
+#urfehzlhnu .gt_column_spanner_outer {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -298,15 +349,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 4px;
 }
 
-#bhcktvlbjo .gt_column_spanner_outer:first-child {
+#urfehzlhnu .gt_column_spanner_outer:first-child {
   padding-left: 0;
 }
 
-#bhcktvlbjo .gt_column_spanner_outer:last-child {
+#urfehzlhnu .gt_column_spanner_outer:last-child {
   padding-right: 0;
 }
 
-#bhcktvlbjo .gt_column_spanner {
+#urfehzlhnu .gt_column_spanner {
   border-bottom-style: solid;
   border-bottom-width: 2px;
   border-bottom-color: #D3D3D3;
@@ -318,11 +369,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   width: 100%;
 }
 
-#bhcktvlbjo .gt_spanner_row {
+#urfehzlhnu .gt_spanner_row {
   border-bottom-style: hidden;
 }
 
-#bhcktvlbjo .gt_group_heading {
+#urfehzlhnu .gt_group_heading {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -348,7 +399,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   text-align: left;
 }
 
-#bhcktvlbjo .gt_empty_group_heading {
+#urfehzlhnu .gt_empty_group_heading {
   padding: 0.5px;
   color: #333333;
   background-color: #FFFFFF;
@@ -363,15 +414,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   vertical-align: middle;
 }
 
-#bhcktvlbjo .gt_from_md > :first-child {
+#urfehzlhnu .gt_from_md > :first-child {
   margin-top: 0;
 }
 
-#bhcktvlbjo .gt_from_md > :last-child {
+#urfehzlhnu .gt_from_md > :last-child {
   margin-bottom: 0;
 }
 
-#bhcktvlbjo .gt_row {
+#urfehzlhnu .gt_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -390,7 +441,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   overflow-x: hidden;
 }
 
-#bhcktvlbjo .gt_stub {
+#urfehzlhnu .gt_stub {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -403,7 +454,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#bhcktvlbjo .gt_stub_row_group {
+#urfehzlhnu .gt_stub_row_group {
   color: #333333;
   background-color: #FFFFFF;
   font-size: 100%;
@@ -417,15 +468,15 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   vertical-align: top;
 }
 
-#bhcktvlbjo .gt_row_group_first td {
+#urfehzlhnu .gt_row_group_first td {
   border-top-width: 2px;
 }
 
-#bhcktvlbjo .gt_row_group_first th {
+#urfehzlhnu .gt_row_group_first th {
   border-top-width: 2px;
 }
 
-#bhcktvlbjo .gt_summary_row {
+#urfehzlhnu .gt_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -435,16 +486,16 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#bhcktvlbjo .gt_first_summary_row {
+#urfehzlhnu .gt_first_summary_row {
   border-top-style: solid;
   border-top-color: #D3D3D3;
 }
 
-#bhcktvlbjo .gt_first_summary_row.thick {
+#urfehzlhnu .gt_first_summary_row.thick {
   border-top-width: 2px;
 }
 
-#bhcktvlbjo .gt_last_summary_row {
+#urfehzlhnu .gt_last_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -454,7 +505,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#bhcktvlbjo .gt_grand_summary_row {
+#urfehzlhnu .gt_grand_summary_row {
   color: #333333;
   background-color: #FFFFFF;
   text-transform: inherit;
@@ -464,7 +515,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#bhcktvlbjo .gt_first_grand_summary_row {
+#urfehzlhnu .gt_first_grand_summary_row {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -474,7 +525,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-top-color: #D3D3D3;
 }
 
-#bhcktvlbjo .gt_last_grand_summary_row_top {
+#urfehzlhnu .gt_last_grand_summary_row_top {
   padding-top: 8px;
   padding-bottom: 8px;
   padding-left: 5px;
@@ -484,11 +535,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#bhcktvlbjo .gt_striped {
+#urfehzlhnu .gt_striped {
   background-color: rgba(128, 128, 128, 0.05);
 }
 
-#bhcktvlbjo .gt_table_body {
+#urfehzlhnu .gt_table_body {
   border-top-style: solid;
   border-top-width: 2px;
   border-top-color: #D3D3D3;
@@ -497,7 +548,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-bottom-color: #D3D3D3;
 }
 
-#bhcktvlbjo .gt_footnotes {
+#urfehzlhnu .gt_footnotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -511,7 +562,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#bhcktvlbjo .gt_footnote {
+#urfehzlhnu .gt_footnote {
   margin: 0px;
   font-size: 90%;
   padding-top: 4px;
@@ -520,7 +571,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#bhcktvlbjo .gt_sourcenotes {
+#urfehzlhnu .gt_sourcenotes {
   color: #333333;
   background-color: #FFFFFF;
   border-bottom-style: none;
@@ -534,7 +585,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   border-right-color: #D3D3D3;
 }
 
-#bhcktvlbjo .gt_sourcenote {
+#urfehzlhnu .gt_sourcenote {
   font-size: 90%;
   padding-top: 4px;
   padding-bottom: 4px;
@@ -542,72 +593,72 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
   padding-right: 5px;
 }
 
-#bhcktvlbjo .gt_left {
+#urfehzlhnu .gt_left {
   text-align: left;
 }
 
-#bhcktvlbjo .gt_center {
+#urfehzlhnu .gt_center {
   text-align: center;
 }
 
-#bhcktvlbjo .gt_right {
+#urfehzlhnu .gt_right {
   text-align: right;
   font-variant-numeric: tabular-nums;
 }
 
-#bhcktvlbjo .gt_font_normal {
+#urfehzlhnu .gt_font_normal {
   font-weight: normal;
 }
 
-#bhcktvlbjo .gt_font_bold {
+#urfehzlhnu .gt_font_bold {
   font-weight: bold;
 }
 
-#bhcktvlbjo .gt_font_italic {
+#urfehzlhnu .gt_font_italic {
   font-style: italic;
 }
 
-#bhcktvlbjo .gt_super {
+#urfehzlhnu .gt_super {
   font-size: 65%;
 }
 
-#bhcktvlbjo .gt_footnote_marks {
+#urfehzlhnu .gt_footnote_marks {
   font-size: 75%;
   vertical-align: 0.4em;
   position: initial;
 }
 
-#bhcktvlbjo .gt_asterisk {
+#urfehzlhnu .gt_asterisk {
   font-size: 100%;
   vertical-align: 0;
 }
 
-#bhcktvlbjo .gt_indent_1 {
+#urfehzlhnu .gt_indent_1 {
   text-indent: 5px;
 }
 
-#bhcktvlbjo .gt_indent_2 {
+#urfehzlhnu .gt_indent_2 {
   text-indent: 10px;
 }
 
-#bhcktvlbjo .gt_indent_3 {
+#urfehzlhnu .gt_indent_3 {
   text-indent: 15px;
 }
 
-#bhcktvlbjo .gt_indent_4 {
+#urfehzlhnu .gt_indent_4 {
   text-indent: 20px;
 }
 
-#bhcktvlbjo .gt_indent_5 {
+#urfehzlhnu .gt_indent_5 {
   text-indent: 25px;
 }
 
-#bhcktvlbjo .katex-display {
+#urfehzlhnu .katex-display {
   display: inline-flex !important;
   margin-bottom: 0.75em !important;
 }
 
-#bhcktvlbjo div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
+#urfehzlhnu div.Reactable > div.rt-table > div.rt-thead > div.rt-tr.rt-tr-group-header > div.rt-th-group:after {
   height: 0px !important;
 }
 </style>
@@ -655,7 +706,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li><p>Sketch</p></li>
 </ol>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="st">"/Users/swaggerboy/github/ENVS-193DS_homework-03/code/IMG_0119.png"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="st">"/Users/swaggerboy/github/ENVS-193DS_homework-03/code/IMG_0119.png"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
@@ -668,11 +719,11 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>Draft of the data visualization</li>
 </ol>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb6"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb6-1"><a href="#cb6-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="st">"/Users/swaggerboy/github/ENVS-193DS_homework-03/code/IMG_0120.png"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="st">"/Users/swaggerboy/github/ENVS-193DS_homework-03/code/IMG_0122.jpg"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">
-<p><img src="IMG_0120.png" class="img-fluid figure-img"></p>
+<p><img src="IMG_0122.jpg" class="img-fluid figure-img"></p>
 </figure>
 </div>
 </div>
@@ -687,7 +738,7 @@ pre > code.sourceCode > span > a:first-child::before { text-decoration: underlin
 <li>The statistical test performed in the study is a multivariate logistic regression. The response variable for the test is the level of contaminant detected in the drinking water and the predictor variables included the drinking fountains, their locations, and sinks. Additionally, a Wilcox signed-rank test was performed for the maximum first and second draw samples.</li>
 </ol>
 <div class="cell">
-<div class="sourceCode cell-code" id="cb7"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb7-1"><a href="#cb7-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="st">"/Users/swaggerboy/github/ENVS-193DS_homework-03/code/screenshot.png"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="sourceCode cell-code" id="cb8"><pre class="sourceCode r code-with-copy"><code class="sourceCode r"><span id="cb8-1"><a href="#cb8-1" aria-hidden="true" tabindex="-1"></a>knitr<span class="sc">::</span><span class="fu">include_graphics</span>(<span class="st">"/Users/swaggerboy/github/ENVS-193DS_homework-03/code/screenshot.png"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 <div class="cell-output-display">
 <div>
 <figure class="figure">

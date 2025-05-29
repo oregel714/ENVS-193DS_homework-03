@@ -38,7 +38,16 @@ money_spent_long_day <- ActiveData1 |> # creating new object from 'ActiveData1' 
   select(`Long Day`, `Money Spent`) # selecting `Long Day` and `Money Spent` 
 
 average_money_summary <- money_spent_long_day |> # create new object from `money_spent_long_day` to `average_money_summary` 
-
+  group_by(`Long Day`) |>  # grouping by `Long Day` points 
+  summarize(mean = mean(`Money Spent`), # summarizing the mean from `Money Spent` 
+            sd = sd(`Money Spent`), # calculating the standard deviation from `Money Spent` 
+            se = sd / sqrt(n()), # calculating standard error from standard deviation 
+            ci_lower = mean - qt(0.975, df = n() - 1) * se, # calculating the upper and lower quartile 
+            ci_upper = mean + qt(0.975, df = n() - 1) * se) |> 
+  
+  
+  mutate(across(c(mean, sd, se, ci_lower, ci_upper), # round mean, sd, se, ci upper and lower to one decimal place 
+                ~ round(.x, 1)))
 ```
 
 ```{r}
