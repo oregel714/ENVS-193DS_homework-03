@@ -127,9 +127,10 @@ a. The statistical test performed in the study is a multivariate logistic regres
 knitr::include_graphics("/Users/swaggerboy/github/ENVS-193DS_homework-03/code/screenshot.png")
 ```
 
-b. The table provided by the author provides the information conveyed in the analysis fairly well. It displays the Mean (standard deviation), maximum, and minimum of the lead levels in ppb which is explained in the caption above the table. Providing this information above the table is a critical aspect to understanding the results as the numbers are confusing without it. The only bold font present would be the column titles above the results, however, the table is a bit cluttered with a lot of numbers so additional emphasis would help clarify important information. 
+b. The table provided by the author displays the information well. Separate columns divide the information with no actual grid to confine the information, however, it stays neat and (on the left) conveys the necessary sample types and the mean, max, and min for each sampling of a first and second draw. 
 
-c. 
+c. The table provided by the author provides the information conveyed in the analysis fairly well. It displays the Mean (standard deviation), maximum, and minimum of the lead levels in ppb which is explained in the caption above the table. Providing this information above the table is a critical aspect to understanding the results as the numbers are confusing without it. The only bold font present would be the column titles above the results, however, the table is a bit cluttered with a lot of numbers so additional emphasis would help clarify important information. 
+
 
 
 
