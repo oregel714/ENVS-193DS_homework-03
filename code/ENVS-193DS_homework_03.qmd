@@ -31,6 +31,16 @@ Problem #1:
 a. I can summarize my data by comparing two groups (long day vs. non-long day) and the average amount of money spent depending on the day. On long days, I'm on campus for more than 5 hours and I feel that I am more tempted to spend money on campus the longer I am here. I can also compare the observations of mean dollars spent on campus between the days that I had breakfast or not. This would allow me to observe if having breakfast might influence whether or not I spend money on campus. 
 
 b.
+
+```{r} 
+# creating `average_money_summary` before so R can read it in order to render 
+money_spent_long_day <- ActiveData1 |> # creating new object from 'ActiveData1' to 'money_spent_long_day'
+  select(`Long Day`, `Money Spent`) # selecting `Long Day` and `Money Spent` 
+
+average_money_summary <- money_spent_long_day |> # create new object from `money_spent_long_day` to `average_money_summary` 
+
+```
+
 ```{r}
 #| message: false
 
